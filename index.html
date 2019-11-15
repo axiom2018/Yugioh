@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- 
+    Goals:
+    1) Make 2 cards for the player and cpu, they start out as the back of the card.
+    -->
+
+    <!-- The title and instructions people will see. -->
+    <header class="main-header"> 
+        <h1> Yugioh battle! Select your card and press attack! </h1> 
+        <h3> Eliminate the life points of the cpu! </h3>
+    </header>
+
+    <!-- Scoreboard of the battle, aka the life points, of player or cpu. -->
+    <div class="score-board">
+        <!-- Keep the id's to recognize them individually. -->
+        <div id="player-label" class="badge">Player</div>
+        <div id="cpu-label" class="badge">Cpu</div>
+        <!-- Keep the life points available. -->
+        <span id="player-lifepoints">8000</span>:<span id="cpu-lifepoints">8000</span>
+    </div>
+
+    <!-- // Instructions to the player \\ -->
+    <div class="instructions"> 
+        <p> Click the button to get a card! Then opponent gets a card. </p>
+        <p> Card with highest attack WINS that round. </p>
+    </div>
+
+    <!-- Text to display whose card it is. -->
+
+    <!-- // The players battle image. \\ -->
+    <div class="card-display:">
+
+        <div class="cards">
+                <div class="playerCard">
+                        <img src="images/cardback.png" alt="" id="playerImage" height="450" width="350">
+                </div>
+        
+                <div class="cpuCard">
+                        <img src="images/cardback.png" alt="" id="cpuImage" height="450" width="350">
+                </div>
+        </div>
+
+        <!-- 
+        <div class="cards">
+        </div>
+        -->
+    </div> 
+
+    <!-- // Let's load up the card manager javascript file. \\-->
+    <script src="cardmanager.js"> </script>
+
+    <!-- // Pass the id of the players image to this function. \\ -->
+    <script> myCardManager.SetId("playerImage"); </script>
+
+    <!-- // This button code sets up a button to call a function. \\ -->
+    <button onclick="myCardManager.ChangeImage()">next</button>
+
+
+    <!-- Go to know we can call js functions from html. -->
+    <!-- <script> myFunction();</script> -->
+    
+    <!-- HOLY FUCKING SHIT THIS WORKS TOO! -->
+    <!-- <script> myCardManager.ThisFunction(); </script> -->
+
+    <!-- <img src=myCardManager.AnotherFunction()> -->
+
+    <!-- <script src="index.js"> </script> -->
+</body>
+</html>
