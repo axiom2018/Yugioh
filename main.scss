@@ -1,0 +1,27 @@
+$theme-colors: (
+  "primary": #0074d9,
+  "danger": #ff4136
+);
+
+$body-bg: rgb(82, 84, 119);
+$primaryBtn : rgb(221, 104, 9)(143, 42, 42);
+$font-stack: Helvetica, sans-serif;
+
+.orange {
+  background-color: orange;
+}
+
+#playerMoney {
+  border-radius: 3px;
+
+
+}
+
+@import "../js-basics/node_modules/bootstrap/scss/bootstrap.scss";
+@import "main.css";
+
+.main-form {
+    width: 450px;
+    margin: auto;
+}
+

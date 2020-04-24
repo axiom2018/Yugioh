@@ -1,0 +1,56 @@
+$primaryBtn : rgb(221, 104, 9)(143, 42, 42);
+$font-stack: Helvetica, sans-serif;
+
+.mainHeader {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#playerLabel {
+    max-height: 20px;
+}
+
+#cpuLabel {
+    max-height: 20px;
+}
+
+#totalMoneyLabel {
+    max-height: 20px;
+    position: relative;
+    justify-content: center;
+    align-content: center;
+    align-self: center;
+}
+
+#poolTotalMoney {
+    position: relative;
+    margin-top: 5px;
+}
+
+#bettingInstruction {
+    position: relative;
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#cardPlacement {
+    position: relative;
+    justify-content: center;
+    left: 25px;
+}
+
+#cardText {
+    font-family: $font-stack;
+    font-weight: bold;
+    position: relative;
+    left: 60px;
+}
+
+#instructionsUpdate {
+    font-size: 20px;
+}
+
+.buttons {
+    justify-content: center;
+    position: relative;
+}

@@ -1,79 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- 
-    Goals:
-    1) Make 2 cards for the player and cpu, they start out as the back of the card.
-    -->
-
-    <!-- The title and instructions people will see. -->
-    <header class="main-header"> 
-        <h1> Yugioh battle! Select your card and press attack! </h1> 
-        <h3> Eliminate the life points of the cpu! </h3>
-    </header>
-
-    <!-- Scoreboard of the battle, aka the life points, of player or cpu. -->
-    <div class="score-board">
-        <!-- Keep the id's to recognize them individually. -->
-        <div id="player-label" class="badge">Player</div>
-        <div id="cpu-label" class="badge">Cpu</div>
-        <!-- Keep the life points available. -->
-        <span id="player-lifepoints">8000</span>:<span id="cpu-lifepoints">8000</span>
-    </div>
-
-    <!-- // Instructions to the player \\ -->
-    <div class="instructions"> 
-        <p> Click the button to get a card! Then opponent gets a card. </p>
-        <p> Card with highest attack WINS that round. </p>
-    </div>
-
-    <!-- Text to display whose card it is. -->
-
-    <!-- // The players battle image. \\ -->
-    <div class="card-display:">
-
-        <div class="cards">
-                <div class="playerCard">
-                        <img src="images/cardback.png" alt="" id="playerImage" height="450" width="350">
-                </div>
+        <title>YugiohGame</title>
         
-                <div class="cpuCard">
-                        <img src="images/cardback.png" alt="" id="cpuImage" height="450" width="350">
-                </div>
-        </div>
+        <link type="text/css" rel="stylesheet" href="main.css"/>
+        <link type="text/css" rel="stylesheet" href="newStyles.css">
 
-        <!-- 
-        <div class="cards">
-        </div>
-        -->
-    </div> 
-
-    <!-- // Let's load up the card manager javascript file. \\-->
-    <script src="cardmanager.js"> </script>
-
-    <!-- // Pass the id of the players image to this function. \\ -->
-    <script> myCardManager.SetId("playerImage"); </script>
-
-    <!-- // This button code sets up a button to call a function. \\ -->
-    <button onclick="myCardManager.ChangeImage()">next</button>
-
-
-    <!-- Go to know we can call js functions from html. -->
-    <!-- <script> myFunction();</script> -->
+        
+        <script type="text/javascript" src="jquery-3.5.0.min.js"> </script>
+        
+    </head>
     
-    <!-- HOLY FUCKING SHIT THIS WORKS TOO! -->
-    <!-- <script> myCardManager.ThisFunction(); </script> -->
+    <body>
+        <!-- The title and instructions people will see. -->
+        <header class="mainHeader text-center"> 
+            <h1> Yugioh gambling game. Get a card and hope it's stronger than the cpu! </h1> 
+        </header>
 
-    <!-- <img src=myCardManager.AnotherFunction()> -->
+        <!-- Keep track of the current money both player and cpu have. -->
+        <div class="moneyBoard text-center">
+            <div id="playerLabel" class="badge orange">Player Money</div>
+            <div id="cpuLabel" class="badge orange">Cpu Money</div> 
 
-    <!-- <script src="index.js"> </script> -->
-</body>
+            <div class="h1">
+                <span id="playerMoney">500</span> 
+                <span id="cpuMoney">500</span>
+            </div>
+        </div>
+
+        <!-- Display the total money label here right under the total money. -->
+        <div id="totalMoneyBadge" class="text-center">
+            <div id="totalMoneyLabel" class="badge badge-primary">
+                Total Money
+            </div>
+        </div>
+
+        <!-- The total money in the current bet pool, up for grabs by player and cpu. -->
+        <div class="h2 text-center">
+            <div id="poolTotalMoney">0</div>
+        </div>
+        
+        <!-- Keep track of how much is currently in the pool while a hand is being played. -->
+        <div class="currentPoolBox text-center">
+            <div id="poolText" class="badge badge-primary">Current bet</div>
+        </div>
+
+
+        <!-- Instructions to the player. -->
+        <div class="instructions text-center"> 
+            <p id="bettingInstruction"> 
+                Before every card drawn, an automatic bet of $50 <u>WILL</u> be made. <br><br>
+                Press the "Begin Duel" button inbetween the cards to start a duel. <br> 
+                Click the button to get a card! Then opponent gets a card. <br> 
+                Card with highest attack WINS that round.  
+            </p>
+        </div>
+
+        <!-- This text is to display for what to do next. -->
+        <p id="instructionsUpdate" class="text-center"> </p>
+
+        <!-- Use the container class to help center. -->
+        <div class="container">
+            <div id="cardPlacement" class="row">
+                <div class="col-3">
+                    <p id="cardText">Player Card</p>
+                    <img src="images/cardback.png" alt="" id="playerImage" height="255" width="205">
+                </div>
+    
+                <div class="col-3">
+                    <p id="cardText">Cpu Card</p>
+                    <img src="images/cardback.png" alt="" id="cpuImage" height="255" width="205">
+                </div>
+            </div>
+        </div>
+
+        <!-- Let's load up the card manager javascript file. -->
+        <script src="cardmanager.js"> </script>
+
+        <!-- Button functionality. 
+         text-center - works for buttons. -->
+        <div class="buttons row w-75"> 
+            <button id="beginDuelButton" class="btn btn-primary" onclick="myCardManager.ToggleDuelState()"> Begin Duel! </button>
+            <button id="getCardForPlayer" onclick="myCardManager.GivePlayerACard()"> Get Card! </button>
+            <button id="RaiseBet" onclick="myCardManager.RaiseBet()">Raise bet</button>
+            <button id="Fold" onclick="myCardManager.FoldHand()">Fold Hand</button>
+            <button id="getResult" onclick="myCardManager.GetResult()">Get Result!</button>
+            <button id="Refresh" onclick="myCardManager.Refresh()">Refresh Hand</button>
+            <button id="LastHand" onclick="myCardManager.LastHandFunctionality()">Last Hand!</button>
+
+            <select id="betsToMake">
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="250">250</option>
+            </select>
+        </div>
+
+        <!-- Helps get all the data for all the buttons needed to play the game. This function MUST remain at the end of the file. -->
+        <script> myCardManager.SaveElements(); </script>
+
+    </body>
 </html>
