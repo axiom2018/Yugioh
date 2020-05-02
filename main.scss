@@ -3,7 +3,7 @@ $theme-colors: (
   "danger": #ff4136
 );
 
-$body-bg: rgb(82, 84, 119);
+$body-bg: rgb(43, 42, 42);
 $primaryBtn : rgb(221, 104, 9)(143, 42, 42);
 $font-stack: Helvetica, sans-serif;
 
@@ -13,8 +13,6 @@ $font-stack: Helvetica, sans-serif;
 
 #playerMoney {
   border-radius: 3px;
-
-
 }
 
 @import "../js-basics/node_modules/bootstrap/scss/bootstrap.scss";

@@ -1,8 +1,8 @@
 $primaryBtn : rgb(221, 104, 9)(143, 42, 42);
 $font-stack: Helvetica, sans-serif;
 
-.mainHeader {
-    font-family: Arial, Helvetica, sans-serif;
+body {
+    background: no-repeat center center fixed;
 }
 
 #playerLabel {
@@ -50,7 +50,40 @@ $font-stack: Helvetica, sans-serif;
     font-size: 20px;
 }
 
-.buttons {
-    justify-content: center;
+#buttons {
     position: relative;
+    margin-top: 40px;
+}
+
+#playerCardInfoText {
+    position: absolute;
+    margin-left: -400px;
+    margin-top: 50px;
+    white-space: pre-wrap;
+}
+
+#cpuCardInfoText {
+    position: absolute;
+    margin-left: 350px;
+    margin-top: 50px;
+    white-space: pre-wrap;
+}
+
+#headerTextSpace {
+    position: relative;
+    background-color: #1b2e3b;
+    margin-bottom: 45px;
+    height: 80px;
+}
+
+#headerText {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+    font-size: 29px;
+    font-family: serif;
+    color: white;
 }

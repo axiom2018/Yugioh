@@ -63,7 +63,7 @@ body {
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #525477; }
+  background-color: #2b2a2a; }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
   outline: 0 !important; }
@@ -399,7 +399,7 @@ mark,
 
 .img-thumbnail {
   padding: 0.25rem;
-  background-color: #525477;
+  background-color: #2b2a2a;
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
   max-width: 100%;
@@ -2972,11 +2972,11 @@ input[type="button"].btn-block {
   .custom-range:focus {
     outline: none; }
     .custom-range:focus::-webkit-slider-thumb {
-      box-shadow: 0 0 0 1px #525477, 0 0 0 0.2rem rgba(0, 116, 217, 0.25); }
+      box-shadow: 0 0 0 1px #2b2a2a, 0 0 0 0.2rem rgba(0, 116, 217, 0.25); }
     .custom-range:focus::-moz-range-thumb {
-      box-shadow: 0 0 0 1px #525477, 0 0 0 0.2rem rgba(0, 116, 217, 0.25); }
+      box-shadow: 0 0 0 1px #2b2a2a, 0 0 0 0.2rem rgba(0, 116, 217, 0.25); }
     .custom-range:focus::-ms-thumb {
-      box-shadow: 0 0 0 1px #525477, 0 0 0 0.2rem rgba(0, 116, 217, 0.25); }
+      box-shadow: 0 0 0 1px #2b2a2a, 0 0 0 0.2rem rgba(0, 116, 217, 0.25); }
   .custom-range::-moz-focus-outer {
     border: 0; }
   .custom-range::-webkit-slider-thumb {
@@ -3108,8 +3108,8 @@ input[type="button"].btn-block {
   .nav-tabs .nav-link.active,
   .nav-tabs .nav-item.show .nav-link {
     color: #495057;
-    background-color: #525477;
-    border-color: #dee2e6 #dee2e6 #525477; }
+    background-color: #2b2a2a;
+    border-color: #dee2e6 #dee2e6 #2b2a2a; }
   .nav-tabs .dropdown-menu {
     margin-top: -1px;
     border-top-left-radius: 0;

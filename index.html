@@ -13,12 +13,13 @@
         
         <script type="text/javascript" src="jquery-3.5.0.min.js"> </script>
         
+
     </head>
     
     <body>
         <!-- The title and instructions people will see. -->
-        <header class="mainHeader text-center"> 
-            <h1> Yugioh gambling game. Get a card and hope it's stronger than the cpu! </h1> 
+        <header id="headerTextSpace" class="text-center"> 
+            <h1 id="headerText"> Yugioh gambling game. Get a card and hope it's stronger than the cpu! </h1> 
         </header>
 
         <!-- Keep track of the current money both player and cpu have. -->
@@ -63,34 +64,82 @@
         <!-- This text is to display for what to do next. -->
         <p id="instructionsUpdate" class="text-center"> </p>
 
-        <!-- Use the container class to help center. -->
+        <!-- Use the container class to help center.
+        Blue Eyes White Dragon
+        Chaos Dragon Levianeer-->
         <div class="container">
             <div id="cardPlacement" class="row">
+                <p id="playerCardInfoText">
+                </p>
                 <div class="col-3">
-                    <p id="cardText">Player Card</p>
+                    <p id="cardText" class="playerCardText">Player Card</p>
                     <img src="images/cardback.png" alt="" id="playerImage" height="255" width="205">
                 </div>
     
                 <div class="col-3">
-                    <p id="cardText">Cpu Card</p>
+                    <p id="cardText" class="cpuCardText">Cpu Card</p>
                     <img src="images/cardback.png" alt="" id="cpuImage" height="255" width="205">
                 </div>
+                <p id="cpuCardInfoText"></p>
             </div>
         </div>
+        
+        <!-- Use jQuery to color the text to white since the background will be a dark color, because dark colors are cool. -->
+        <script>
+            $("document").ready(function(){
+                // Change vital text color to white.
+                $("#playerMoney").css("color", "white");
+                $("#cpuMoney").css("color", "white");
+                $("#poolTotalMoney").css("color", "white");
+                $("#bettingInstruction").css("color", "white");
+                $("#instructionsUpdate").css("color", "white");
+                $("#playerCardInfoText").css("color", "white");
+                $("#cpuCardInfoText").css("color", "white");
 
-        <!-- Let's load up the card manager javascript file. -->
-        <script src="cardmanager.js"> </script>
+                /* Select a background image from a variety. This is a dynamic background implementation. Must be sure to stay
+                updated with how many background images or wallpapers we have. in the images/wallpapers folder to get a proper 
+                range going. For example if we have 3 background images, the range will be 1 to 3. Get the index according to 
+                the amount of wallpapers. */
+                let index = Math.floor(Math.random() * 5) + 1;
 
-        <!-- Button functionality. 
-         text-center - works for buttons. -->
-        <div class="buttons row w-75"> 
-            <button id="beginDuelButton" class="btn btn-primary" onclick="myCardManager.ToggleDuelState()"> Begin Duel! </button>
-            <button id="getCardForPlayer" onclick="myCardManager.GivePlayerACard()"> Get Card! </button>
-            <button id="RaiseBet" onclick="myCardManager.RaiseBet()">Raise bet</button>
-            <button id="Fold" onclick="myCardManager.FoldHand()">Fold Hand</button>
-            <button id="getResult" onclick="myCardManager.GetResult()">Get Result!</button>
-            <button id="Refresh" onclick="myCardManager.Refresh()">Refresh Hand</button>
-            <button id="LastHand" onclick="myCardManager.LastHandFunctionality()">Last Hand!</button>
+                // Concatenate the index to the following string.
+                let stringLocation = 'url(../images/wallpapers/' + index + '.jpg)';
+                // let stringLocation = 'url(../images/wallpapers/4.jpg';
+
+                // Now apply the image to the background.
+                $("body").css("background-image", stringLocation);
+
+                // Also change the font styles of the card and cpu text info.
+                $("#playerCardInfoText").css("font-family", "Noto Sans");
+                $("#cpuCardInfoText").css("font-family", "Noto Sans");
+
+                // Move the Raise bet button a little to the left.
+                $("#RaiseBet").css({
+                    "position":"absolute",
+                    "margin-left":"-130px"
+                });
+
+                // Now move the bets to make selectors a bit to the right.
+                $("#betsToMake").css({
+                    "position":"absolute",
+                    "margin-left":"110px"
+                });
+
+                // Get all with the id cardText and set the color to white.
+                $('*[id=cardText]:visible').each(function(){
+                    $(this).css("color", "white");
+                });
+            });
+        </script>
+
+        <div id="buttons" class="d-flex justify-content-center"> 
+            <button id="beginDuelButton" class="btn btn-primary"> Begin Duel! </button>
+            <button id="getCardForPlayer" class="btn btn-dark"> Get Card! </button>
+            <button id="RaiseBet" class="btn btn-dark">Raise bet</button>
+            <button id="Fold" class="btn btn-warning">Fold Hand</button>
+            <button id="getResult" class="btn btn-dark">Get Result!</button>
+            <button id="Refresh" class="btn btn-dark">Refresh Hand</button>
+            <button id="LastHand" class="btn btn-danger">Last Hand!</button>
 
             <select id="betsToMake">
                 <option value="50">50</option>
@@ -99,8 +148,8 @@
             </select>
         </div>
 
-        <!-- Helps get all the data for all the buttons needed to play the game. This function MUST remain at the end of the file. -->
-        <script> myCardManager.SaveElements(); </script>
+        <!-- The javascript files will be loaded once main.js is called and functionality will be properly applied. -->
+        <script type="module" src="main.js"></script>
 
     </body>
 </html>
