@@ -1,22 +1,21 @@
 // Simple stack data structure for handling the yugioh deck.
 export class DeckStack {
-    constructor() {
+    constructor(deckFactoryClass) {
         // The deck will be a stack of course since both players will get cards from top of a faced down deck. So set an empty array.
         this.deck = [];
 
         // Set a cap for the deck size since yugioh decks have a limit (40-60).
-        this.max = 15;
+        this.max = 10;
 
-        // Initialize all of the cards.
-        this.deck.push(this.CreateCard("Blue-Eyes White Dragon", 3000, 2500, "images/blueeyes.png", 8, "Dragon", "Light"));
-        this.deck.push(this.CreateCard("Dark Magician", 2500, 2100, "images/darkmagician.png", 7, "Spellcaster", "Dark"));
-        this.deck.push(this.CreateCard("Lightpulsar Dragon", 2500, 1500, "images/lightpulsardragon.png", 6, "Dragon", "Light"));
-        this.deck.push(this.CreateCard("Chaos Dragon Levianeer", 3000, 0, "images/chaosdragonlevianeer.png", 8, "Dragon", "Dark"));
-        this.deck.push(this.CreateCard("Curse Of Dragon", 2000, 1500, "images/curseofdragon.png", 5, "Dragon", "Dark"));
-        this.deck.push(this.CreateCard("Adamancipator Analyzer", 1500, 700, "images/adamancipatoranalyzer.png", 4, "Rock", "Earth"));
-        this.deck.push(this.CreateCard("Uni-Zombie", 1300, 0, "images/unizombie.png", 3, "Zombie", "Dark"));
-        this.deck.push(this.CreateCard("Hitotsu-Me Giant", 1200, 1000, "images/hitotsumegiant.png", 4, "Beast-Warrior", "Earth"));
-        this.deck.push(this.CreateCard("TrapTrix Genlisea", 1200, 1600, "images/traptrixgenlisea.png", 4, "Plant", "Earth"));
+        // Save the deck factory.
+        this.deckFactoryClass = deckFactoryClass;
+    }
+
+    // Use the factory to get the deck that will be chosen by the player via the selectable options with the id choiceOfDeck in index.html.
+    LoadDeck(index) {
+        // Get the deck then shuffle it.
+        this.deck = this.deckFactoryClass.DeckFactoryMethod(index);
+        this.Shuffle();
     }
 
     // Using the fisher-yates shuffle algorithm to shuffle the deck.
@@ -46,17 +45,7 @@ export class DeckStack {
         }
     }
 
-    /* Data we need to store on each monster card:
-    
-    1) Name.
-    2) Attack points.
-    3) Defence points.
-    4) The images. 
-    5) Levels
-    6) Type.
-    7) Attributes. */
-
-    Push(name, attackPoints, defensePoints, imgSrc, level, type, attribute) {
+    Push(...cardData) {
         // Check if max is reached. If so, return early.
         if (this.deck.length >= this.max) {
             // Test log.
@@ -66,7 +55,7 @@ export class DeckStack {
         }
 
         // If not, simply push to the stack.
-        this.deck.push(this.CreateCard(name, attackPoints, defensePoints, imgSrc, level, type, attribute));
+        this.deck.push(this.SetCardData(cardData[0], cardData[1], cardData[2], cardData[3], cardData[4], cardData[5], cardData[6], cardData[7], cardData[8]));
     }
 
     // Typical stack function.
@@ -94,15 +83,17 @@ export class DeckStack {
     }
 
     // Card creation function, core to the game working.
-    CreateCard(name, attackPoints, defensePoints, imgSrc, level, type, attribute) {
+    SetCardData(...cardData) {
         return { 
-            Name:name, 
-            AttackPoints: attackPoints,
-            DefensePoints: defensePoints,
-            Imgsrc: imgSrc,
-            Level: level,
-            Type: type,
-            Attribute: attribute
+            Name:cardData[0], 
+            AttackPoints: cardData[1],
+            DefensePoints: cardData[2],
+            Imgsrc: cardData[3],
+            Level: cardData[4],
+            Rank: cardData[5],
+            Link: cardData[6],
+            Type: cardData[7],
+            Attribute: cardData[8]
         }
     }
 }

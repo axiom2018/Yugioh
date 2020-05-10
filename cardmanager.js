@@ -1,15 +1,18 @@
 // Main card manager class.
 export class CardManager {
-    constructor(cpu, deckstack) {
+    constructor(player, cpu, deckstack) {
+        // Save the player to start, then the elements.
+        this.player = player;
+
+        // Save the cpu, then the elements for cpu and give the deck as well.
+        this.cpu = cpu;
+        this.cpu.SaveElements();
+
         // Initially set to false, because when user first arrives to the page, they haven't dueled at all.
         this.duelBegun = false;
 
         // Set an empty array to hold the card objects later.
         this.deck = [];
-        
-        // Save the image variables for player and cpu via id to change images of cards.
-        this.playerImageID = document.getElementById("playerImage");
-        this.cpuImageID = document.getElementById("cpuImage");
 
         // Save the stack.
         this.stack = deckstack;
@@ -23,14 +26,6 @@ export class CardManager {
         // Save the value to bet as a variable in the class. The cpu MUST know about this number to know what it must match to keep playing.
         this.valueToBet = 0;
 
-        /* When the player presses the getCard button, the cpu card can't be immediately revealed. They'll see their odds of winning the hand. Just
-        save the card and display after final bet placed.*/
-        this.playerCard = null;
-
-        /* Why is this needed? Example, after we raise bet, we could end up betting the last money the player has. */
-        this.playerGameOverCheck = false;
-        this.cpuGameOverCheck = false;
-
         /* When the last hand button is displayed that means either the player or cpu is about to lose. But both of their
         functionalities differ regarding the message displayed on screen and other things. So we'll have a function in
         this variable to use when ready. */
@@ -38,14 +33,6 @@ export class CardManager {
 
         // Test variable.
         this.testClassObj = null;
-        
-        this.stack.Shuffle();
-        this.stack.PrintDeckInStackForm();
-
-        // Save the cpu, then the elements for cpu and give the deck as well.
-        this.cpu = cpu;
-        this.cpu.SaveElements();
-        this.cpu.SetDeck(this.stack.GetDeck());
     }
 
     // The buttons have id's assigned and in order to get elements by id, we'll need to do so with the id tag.
@@ -66,8 +53,7 @@ export class CardManager {
         this.refreshButton.style.display = "none";
 
         // Save the text for money.
-        this.playerMoneyElement = document.getElementById("playerMoney");
-        this.cpuMoneyElement = document.getElementById("cpuMoney");
+        // this.cpuMoneyElement = document.getElementById("cpuMoney");
 
         // Save text for the current pool money.
         this.currentPool = document.getElementById("poolTotalMoney");
@@ -89,15 +75,9 @@ export class CardManager {
         this.betSelectors = document.getElementById("betsToMake");
         this.betSelectors.style.display = "none";
 
-        // Save the 2 spaces where we'll display all the card info for both player and cpu, then set them to empty strings.
-        this.playerCardInfoText = document.getElementById("playerCardInfoText");
-        this.cpuCardInfoText = document.getElementById("cpuCardInfoText");
-        // this.playerCardInfoText.textContent = "";
-        this.cpuCardInfoText.textContent = "";
-
-        // Ready strings to be used to save card info.
-        this.playerCardInfo = "";
-        this.cpuCardInfo = "";
+        // Get the deck text and deck selectors here.
+        this.deckChoiceText = document.getElementById("deckChoicesText");
+        this.deckSelectors = document.getElementById("choiceOfDeck");
     }
 
     // Add the functions to buttons.
@@ -105,36 +85,14 @@ export class CardManager {
         // Ready the self variable for later use.
         var self = this;
 
-        // Add the function ToggleDuelState to the duel button to start the duel.
-        this.duelButton.addEventListener("click", function(){
-            self.ToggleDuelState();
-        })
-
-        // Add the GivePlayerACard function to get card button.
-        this.getCardButton.addEventListener("click", function(){
-            self.GivePlayerACard();
-        })
-
-        // Then continue to get the rest of the functions assigned.
-        this.raiseBetButton.addEventListener("click", function(){
-            self.RaiseBet();
-        })
-
-        this.foldButton.addEventListener("click", function(){
-            self.FoldHand();
-        })
-
-        this.getResultButton.addEventListener("click", function(){
-            self.GetResult();
-        })
-
-        this.refreshButton.addEventListener("click", function(){
-            self.Refresh();
-        })
-
-        this.lastHandButton.addEventListener("click", function(){
-            self.lastHandFunction();
-        })
+        // Add the function ToggleDuelState to the duel button to start the duel, then the GivePlayerACard function to the get card button, etc.
+        this.duelButton.addEventListener("click", function(){ self.ToggleDuelState(); })
+        this.getCardButton.addEventListener("click", function(){ self.GivePlayerACard(); })
+        this.raiseBetButton.addEventListener("click", function(){ self.RaiseBet(); })
+        this.foldButton.addEventListener("click", function(){ self.FoldHand(); })
+        this.getResultButton.addEventListener("click", function(){ self.GetResult(); })
+        this.refreshButton.addEventListener("click", function(){ self.Refresh(); })
+        this.lastHandButton.addEventListener("click", function(){ self.lastHandFunction(); })
     }
 
     PrintMonsterCards() {
@@ -158,6 +116,16 @@ export class CardManager {
 
         // Then of course since we already started the game, hide the begin duel button.
         this.duelButton.style.display = "none";
+
+        // Now just hide the deck choice text and deck selectors text.
+        this.deckChoiceText.style.display = "none";
+        this.deckSelectors.style.display = "none";
+        
+        // Call the stack and let it use the factory for the deck we've selected.
+        this.stack.LoadDeck(this.deckSelectors.selectedIndex);
+
+        // Set the deck for the cpu.
+        this.cpu.SetDeck(this.stack.GetDeck());
     }
 
     // When player isn't confident in the card and doesn't want to risk losing more money.
@@ -166,10 +134,10 @@ export class CardManager {
         this.textIdElement.textContent = "Hand lost due to fold. Get another card to try again!";
 
         // Set player card into text to empty.
-        this.playerCardInfoText.textContent = "";
+        this.player.SetCardInfoText("");
 
         // Since the PLAYER gives up. The current bet money goes to cpu.
-        this.cpuMoneyElement.textContent = parseInt(this.cpuMoneyElement.textContent) + parseInt(this.currentBet);
+        this.cpu.GetMoneyElement().textContent = parseInt(this.cpu.GetMoneyElement().textContent) + parseInt(this.currentBet);
 
         // Set the current bet to be 0 now since this hand is over.
         this.currentBet = 0;
@@ -178,18 +146,18 @@ export class CardManager {
         this.currentPool.textContent = 0;
 
         // We must be sure to place the cards BACK in the stack.
-        this.stack.Push(this.playerCard.Name, this.playerCard.AttackPoints, this.playerCard.DefensePoints, this.playerCard.Imgsrc,
-            this.playerCard.Level, this.playerCard.Type, this.playerCard.Attribute);
+        this.stack.Push(this.player.GetCard().Name, this.player.GetCard().AttackPoints, this.player.GetCard().DefensePoints, this.player.GetCard().Imgsrc,
+            this.player.GetCard().Level, this.player.GetCard().Rank, this.player.GetCard().Link, this.player.GetCard().Type, this.player.GetCard().Attribute);
 
         this.stack.Push(this.cpu.GetCard().Name, this.cpu.GetCard().AttackPoints, this.cpu.GetCard().DefensePoints, this.cpu.GetCard().Imgsrc,
-            this.cpu.GetCard().Level, this.cpu.GetCard().Type, this.cpu.GetCard().Attribute);
+            this.cpu.GetCard().Level, this.cpu.GetCard().Rank, this.cpu.GetCard().Link, this.cpu.GetCard().Type, this.cpu.GetCard().Attribute);
 
         // Set these temporary card variables back to null.
-        this.playerCard = null;
+        this.player.DeleteCard();
         this.cpu.DeleteCard();
 
         // Also the image source for the player card must be changed back to the default.
-        this.playerImageID.setAttribute("src", "images/cardback.png");
+        this.player.SetImageID("src", "images/cardback.png");
 
         // Message, shuffle, and print stack to screen.
         console.clear();
@@ -211,12 +179,12 @@ export class CardManager {
 
     HandleCpuMoney() {
         // If value to bet is greater than the cpu money, let cpu just bet the rest of what it has.
-        if(parseInt(this.valueToBet) > this.cpuMoneyElement.textContent) {
+        if(parseInt(this.valueToBet) > this.cpu.GetMoneyElement().textContent) {
             // Save cpu money in variable.
-            let cpuMoney = parseInt(this.cpuMoneyElement.textContent);
+            let cpuMoney = parseInt(this.cpu.GetMoneyElement().textContent);
 
             // Now set the value to 0 since the value player BET is more than the cpu really HAS.
-            this.cpuMoneyElement.textContent = 0;
+            this.cpu.GetMoneyElement().textContent = 0;
 
             // Return remaining cpu money to be used in get result to know how much to add to pool.
             return cpuMoney;
@@ -226,7 +194,7 @@ export class CardManager {
         else 
         {
             // Subtract the value to bet FROM the cpus money. 
-            this.cpuMoneyElement.textContent = parseInt(this.cpuMoneyElement.textContent) - this.valueToBet;
+            this.cpu.GetMoneyElement().textContent = parseInt(this.cpu.GetMoneyElement().textContent) - this.valueToBet;
         }
 
         // Return the value to bet because cpu was able to match it.
@@ -238,7 +206,7 @@ export class CardManager {
         // Can the cpu attack?
         if(this.cpu.GetState().CanAllow()) {
             // If so, display cpu card if player goes for it.
-            this.cpuImageID.setAttribute("src", this.cpu.GetCard().Imgsrc);
+            this.cpu.SetImageID("src", this.cpu.GetCard().Imgsrc);
             
             // Add the money to the pool.
             this.currentPool.textContent = parseInt(this.currentPool.textContent) + parseInt(this.HandleCpuMoney()); 
@@ -247,7 +215,7 @@ export class CardManager {
             this.textIdElement.textContent = firstMessage;
 
             // Show the cpu's card info. 
-            this.cpuCardInfoText.textContent = this.cpuCardInfo;
+            this.cpu.SetCardInfoText(this.cpu.GetCardInfo());
 
             // If default arg is false, just add money to the first element.
             if(attacksEqual == false) {
@@ -286,29 +254,27 @@ export class CardManager {
         /* 3 conditions that can happen. Player wins (their card attack is greater than the cpu's card attack), Cpu wins (cpu card attack is greater
         than the players card attack), or their both equal. First let's check for player win but first let's get the player card and we have it
         saved here in this class already, get the attack from it. */
-        let playerCardAttack = this.playerCard.AttackPoints;
+        let playerCardAttack = this.player.GetCard().AttackPoints; 
 
         // Now the cpu card attack.
         let cpuCardAttack = this.cpu.GetCard().AttackPoints;
 
         // Use if statements to check who wins this hand.
         if(playerCardAttack > cpuCardAttack) {
-            // Call to handle the rest.
-            this.HandleResult(this.playerMoneyElement, this.playerMoneyElement, 
+            // Call to handle the rest. this.playerMoneyElement for both.
+            this.HandleResult(this.player.GetMoneyElement(), this.player.GetMoneyElement(), 
                 "You win! Cpu card not strong enough, hit refresh button to play again!",
                 "You win! Cpu folds, hit refresh button to play again!");
         }
 
         else if(cpuCardAttack > playerCardAttack) {
-            // Call to handle the rest.
-            this.HandleResult(this.cpuMoneyElement, this.playerMoneyElement, 
+            this.HandleResult(this.cpu.GetMoneyElement(), this.player.GetMoneyElement(), 
                 "Cpu has beaten you, hit refresh button to play again!",
                 "You win! Cpu folds, hit refresh button to play again!");
         }
 
         else {
-            // Call to handle the rest.
-            this.HandleResult(this.cpuMoneyElement, this.playerMoneyElement, 
+            this.HandleResult(this.cpu.GetMoneyElement(), this.player.GetMoneyElement(), 
                 "Draw! Both monsters have same attack! And cpu attacked.",
                 "Draw! Both monsters have same attack! And cpu did NOT attack.", true);
         }
@@ -319,11 +285,11 @@ export class CardManager {
         // Resets the cards, and the bets.
         this.PostHandCleanUp();
 
-        console.log("Player game over value is " + this.playerGameOverCheck);
-        console.log("Cpu game over value is " + this.cpuGameOverCheck);
+        console.log("Player game over value is " + this.player.GetGameOverCheck());
+        console.log("Cpu game over value is " + this.cpu.GetGameOverCheck());
 
-        // Check for playerGameOverCheck ig it's true, if so, the player MIGHT have lost.
-        if(this.playerGameOverCheck && (parseInt(this.playerMoneyElement.textContent)) <= 0) {
+        // Check for playerGameOverCheck ig it's true, if so, the player MIGHT have lost. Changed PME here too, accessed text content. goc
+        if(this.player.GetGameOverCheck() && (parseInt(this.player.GetMoneyElement().textContent)) <= 0) {
             console.log("Player loses! Game over!\n");
             this.textIdElement.textContent = "Bro you LOST bro. You're looking weak out here. Refresh the page and try again!";
             this.getResultButton.style.display = "none";
@@ -331,7 +297,7 @@ export class CardManager {
         }
 
         // Check for playerGameOverCheck ig it's true, if so, the player MIGHT have lost.
-        if(this.cpuGameOverCheck && (parseInt(this.cpuMoneyElement.textContent)) <= 0) {
+        if(this.cpu.GetGameOverCheck() && (parseInt(this.cpu.GetMoneyElement().textContent)) <= 0) {
             console.log("Cpu loses! Game over!\n");
             this.textIdElement.textContent = "Victory! Celebrate your Yugioh abilities with a beer. Refresh the page to play again.";
             this.getResultButton.style.display = "none";
@@ -339,8 +305,8 @@ export class CardManager {
         }
 
         // The game over checks could have been true, but the player or cpu didn't actually lose, so set them back to false.
-        this.playerGameOverCheck = false;
-        this.cpuGameOverCheck = false;
+        this.player.SetGameOverCheck(false);
+        this.cpu.SetGameOverCheck(false);
 
         // Show the refresh hand button.
         this.refreshButton.style.display = "block";
@@ -356,12 +322,12 @@ export class CardManager {
         this.stack.PrintDeckInStackForm();
 
         // Clear the text for the card info.
-        this.playerCardInfoText.textContent = "";
-        this.cpuCardInfoText.textContent = "";
+        this.player.SetCardInfoText("");
+        this.cpu.SetCardInfoText("");
 
         // Since the cards are back in the deck, set both image sources back to the default states.
-        this.playerImageID.setAttribute("src", "images/cardback.png");
-        this.cpuImageID.setAttribute("src", "images/cardback.png");
+        this.player.SetImageID("src", "images/cardback.png");
+        this.cpu.SetImageID("src", "images/cardback.png");
     
         // Show the get card button.
         this.getCardButton.style.display = "block";
@@ -376,29 +342,72 @@ export class CardManager {
     // Show card info like attack/defense points, etc on screen.
     PrepareCardInfo() {
         // Create a string for both sets of data to be shown.
-        this.playerCardInfo = this.playerCardInfoText.textContent;
-        this.playerCardInfo = this.playerCard.Name + "\n";
-        this.playerCardInfo += this.playerCard.Level + " *\n";
-        this.playerCardInfo += "Attack: " + this.playerCard.AttackPoints + "\n";
-        this.playerCardInfo += "Defense: " + this.playerCard.DefensePoints + "\n";
-        this.playerCardInfo += "Type: " + this.playerCard.Type + "\n";
-        this.playerCardInfo += "Attribute: " + this.playerCard.Attribute + "\n";
+        this.player.SetCardInfo(this.player.GetCardInfoText().textContent);
+        this.player.SetCardInfo(this.player.GetCard().Name + "\n");
+
+        /* This is where we distinguish between normal cards with levels and xyz monsters with ranks. By default, if a card has a level, it will be assigned 0
+        rank. So check if rank is 0, if so, it has a level. If rank is not 0, card doesn't have a level, BUT a rank. */
+        if(this.player.GetCard().Rank > 0) {
+            this.player.AddToCardInfo(this.player.GetCard().Rank + " rank\n");
+        }
+
+        else if(this.player.GetCard().Level > 0) {
+            this.player.AddToCardInfo(this.player.GetCard().Level + " *\n");
+        }
+
+        // Check with an else statement if BOTH are 0, if that's true, it is a link monster which has neither level nor rank, but a link condition.
+
+        this.player.AddToCardInfo("Attack: " + this.player.GetCard().AttackPoints + "\n");
+
+        // Also remember link monsters have no defense points. Prepare for that as well.
+        if(this.player.GetCard().Link > 0) {
+            this.player.AddToCardInfo("LINK - " + this.player.GetCard().Link + "\n");
+        } 
+
+        // If it's not, it has defense points instead.
+        else {
+            this.player.AddToCardInfo("Defense: " + this.player.GetCard().DefensePoints + "\n");
+        }
+
+        this.player.AddToCardInfo("Type: " + this.player.GetCard().Type + "\n");
+        this.player.AddToCardInfo("Attribute: " + this.player.GetCard().Attribute + "\n");
     
-        this.cpuCardInfo = this.cpuCardInfoText.textContent;
-        this.cpuCardInfo = this.cpu.GetCard().Name + "\n";
-        this.cpuCardInfo += this.cpu.GetCard().Level + " star\n";
-        this.cpuCardInfo += "Attack: " + this.cpu.GetCard().AttackPoints + "\n";
-        this.cpuCardInfo += "Defense: " + this.cpu.GetCard().DefensePoints + "\n";
-        this.cpuCardInfo += "Type: " + this.cpu.GetCard().Type + "\n";
-        this.cpuCardInfo += "Attribute: " + this.cpu.GetCard().Attribute + "\n";
+
+
+        // this.cpu.SetCardInfoText(this.cpu.GetCardInfo());
+        this.cpu.SetCardInfo(this.cpu.GetCardInfoText()); // .cpuCardInfoText.textContent
+        this.cpu.SetCardInfo(this.cpu.GetCard().Name + "\n");
+
+        // Do the same for the cpu card.
+        if(this.cpu.GetCard().Rank > 0) {
+            this.cpu.AddToCardInfo(this.cpu.GetCard().Rank + " rank\n");
+        }
+
+        else if(this.cpu.GetCard().Level > 0) {
+            this.cpu.AddToCardInfo(this.cpu.GetCard().Level + " *\n");
+        }
+
+        this.cpu.AddToCardInfo("Attack: " + this.cpu.GetCard().AttackPoints + "\n");
+
+        // Apply link as well.
+        if(this.cpu.GetCard().Link > 0) {
+            this.cpu.AddToCardInfo("LINK - " + this.cpu.GetCard().Link + "\n");
+        }
+
+        else {
+            this.cpu.AddToCardInfo("Defense: " + this.cpu.GetCard().DefensePoints + "\n");
+        }
+
+        this.cpu.AddToCardInfo("Type: " + this.cpu.GetCard().Type + "\n");
+        this.cpu.AddToCardInfo("Attribute: " + this.cpu.GetCard().Attribute + "\n");
     }
 
     GivePlayerACard() {
         // Simple clear for testing.
         console.clear();
 
-        // Get a card from the stack for player.
-        this.playerCard = this.stack.Pop();
+        // Get a card from the stack for player. 
+        this.player.SetCard(this.stack.Pop());
 
         // Then one for cpu. Save the card first, do NOT display it.
         this.cpu.SetCard(this.stack.Pop());
@@ -407,19 +416,19 @@ export class CardManager {
         this.PrepareCardInfo();
 
         // Show the player card info on screen since its card is displayed.
-        this.playerCardInfoText.textContent = this.playerCardInfo;
+        this.player.SetCardInfoText(this.player.GetCardInfo());
 
         // Set the player zone to it's card.
-        this.playerImageID.setAttribute("src", this.playerCard.Imgsrc);
+        this.player.SetImageID("src", this.player.GetCard().Imgsrc); 
 
         // Then just shuffle and print the deck.
         console.log("\n\n");
         this.stack.Shuffle();
         this.stack.PrintDeckInStackForm();
 
-        // Finally since we give out a card, we must decrement money from the player and cpu.
-        let playerMoney = this.playerMoneyElement.textContent - this.cost;
-        let cpuMoney = this.cpuMoneyElement.textContent - this.cost;
+        // Finally since we give out a card, we must decrement money from the player and cpu. 
+        let playerMoney = this.player.GetMoneyElement().textContent - this.cost;
+        let cpuMoney = this.cpu.GetMoneyElement().textContent - this.cost;
 
         // EVERY time we get a card, we know for a fact 50 will be taken from both competitors.
         this.currentBet = this.cost * 2;
@@ -429,11 +438,11 @@ export class CardManager {
         this.currentPool.textContent = parseInt(this.currentPool.textContent) + parseInt(this.currentBet);
 
         // Then set it on screen.
-        this.playerMoneyElement.textContent = playerMoney;
-        this.cpuMoneyElement.textContent = cpuMoney;
+        this.player.GetMoneyElement().textContent = playerMoney;
+        this.cpu.GetMoneyElement().textContent = cpuMoney;
 
-        console.log("Players current money is " + parseInt(this.playerMoneyElement.textContent));
-        console.log("Cpus current money is " + parseInt(this.cpuMoneyElement.textContent));
+        console.log("Players current money is " + parseInt(this.player.GetMoneyElement().textContent));
+        console.log("Cpus current money is " + parseInt(this.cpu.GetMoneyElement()));
 
         // Display new text on screen regarding what to do next.
         this.textIdElement.textContent = "You see your card to the left. Raise the bet or fold your hand.";
@@ -472,14 +481,14 @@ export class CardManager {
         // To raise the bet, we must be able to get the value out of the selector. 
         this.valueToBet = this.betSelectors.options[this.betSelectors.selectedIndex].textContent;
 
-        // Check if we can even bet the requested amount according to the players current money.
-        if(parseInt(this.valueToBet) > this.playerMoneyElement.textContent) {
+        // Check if we can even bet the requested amount according to the players current money. 
+        if(parseInt(this.valueToBet) > this.player.GetMoneyElement().textContent) {
             // If we can't, return.
             return;
         }
 
-        // Subtract the value to bet FROM the players money. 
-        this.playerMoneyElement.textContent = parseInt(this.playerMoneyElement.textContent) - this.valueToBet;
+        // Subtract the value to bet FROM the players money.
+        this.player.DecreaseMoneyElement(this.valueToBet);
 
         // Add the money to the pool.
         this.currentPool.textContent = parseInt(this.currentPool.textContent) + parseInt(this.valueToBet);
@@ -487,18 +496,18 @@ export class CardManager {
         // Next let the cpu decide if it wants to take the bet or fold.
         this.cpu.RaiseOrFold(this.valueToBet);
 
-        // Check if player money is 0. 
-        if(parseInt(this.playerMoneyElement.textContent) <= 0) {
+        // Check if player money is 0. PME
+        if(parseInt(this.player.GetMoneyElement().textContent) <= 0) {
             // Set the boolean to true so when hand is done, it checks to see if player lost.
-            this.playerGameOverCheck = true;
-            console.log("Player this is your LAST bet. Value is " + this.playerGameOverCheck);
+            this.player.SetGameOverCheck(true);
+            console.log("Player this is your LAST bet. Value is " + this.player.GetGameOverCheck());
         }
 
         // Check if cpu money is 0. 
-        if(parseInt(this.valueToBet) >= parseInt(this.cpuMoneyElement.textContent)) {
+        if(parseInt(this.valueToBet) >= parseInt(this.cpu.GetMoneyElement().textContent)) {
             // Set the boolean to true so when hand is done, it checks to see if cpu lost.
-            this.cpuGameOverCheck = true;
-            console.log("Cpu this is your last bet. Value is " + this.cpuGameOverCheck);
+            this.cpu.SetGameOverCheck(true);
+            console.log("Cpu this is your last bet. Value is " + this.cpu.GetGameOverCheck());
         }
     }
 
@@ -510,18 +519,20 @@ export class CardManager {
 
     // If the player has $50 left, but can still place a bet, this is their last hand. Be prepared for that case! 
     LastHandForPlayer() {
-        console.log("test");
         // First reveal the cpu card.
-        this.cpuImageID.setAttribute("src", this.cpu.GetCard().Imgsrc);
+        this.cpu.SetImageID("src", this.cpu.GetCard().Imgsrc);
 
-        // No need to check if the cpu is ALLOWED to attack or has changed its state to attack. So begin comparisons of attack points. Get the attacks to start.
-        let playerCardAttack = this.playerCard.AttackPoints;
+        // Show the cpu's card info. 
+        this.cpu.SetCardInfoText(this.cpu.GetCardInfo());
+
+        // No need to check if the cpu is ALLOWED to attack or has changed its state to attack. So begin comparisons of attack points. Get the attacks to start. pc
+        let playerCardAttack = this.player.GetCard().AttackPoints; 
         let cpuCardAttack = this.cpu.GetCard().AttackPoints;
 
         // Check if player actually won this.
         if(playerCardAttack > cpuCardAttack) {
-            // If the player did win, simply assign the pool value to the players money total.
-            this.playerMoneyElement.textContent = parseInt(this.playerMoneyElement.textContent) + parseInt(this.currentPool.textContent);
+            // If the player did win, simply assign the pool value to the players money total. 
+            this.player.IncreaseMoneyElement(this.currentPool.textContent);
 
             // Empty pool.
             this.currentPool.textContent = 0;
@@ -539,7 +550,7 @@ export class CardManager {
         // If the player loses.
         else if(cpuCardAttack > playerCardAttack) {
             // Take what's in the pool and give it to the cpu.
-            this.cpuMoneyElement.textContent = parseInt(this.cpuMoneyElement.textContent) + parseInt(this.currentPool.textContent);
+            this.cpu.GetMoneyElement().textContent = parseInt(this.cpu.GetMoneyElement().textContent) + parseInt(this.currentPool.textContent);
 
             // Empty pool.
             this.currentPool.textContent = 0;
@@ -556,9 +567,9 @@ export class CardManager {
             // Get half money from pool.
             let halfMoneyFromPool = parseInt(this.currentPool.textContent) / 2;
 
-            // Add it to both elements.
-            this.playerMoneyElement.textContent = parseInt(this.playerMoneyElement.textContent) + halfMoneyFromPool;
-            this.cpuMoneyElement.textContent = parseInt(this.cpuMoneyElement.textContent) + halfMoneyFromPool;
+            // Add it to both elements. 
+            this.player.IncreaseMoneyElement(halfMoneyFromPool);
+            this.cpu.GetMoneyElement().textContent = parseInt(this.cpu.GetMoneyElement().textContent) + halfMoneyFromPool;
 
             // Empty pool.
             this.currentPool.textContent = 0;
@@ -579,19 +590,19 @@ export class CardManager {
 
     LastHandForCpu() {
         // First reveal the cpu card.
-        this.cpuImageID.setAttribute("src", this.cpu.GetCard().Imgsrc);
+        this.cpu.SetImageID("src", this.cpu.GetCard().Imgsrc);
 
         // Show the cpu's card info. 
-        this.cpuCardInfoText.textContent = this.cpuCardInfo;
+        this.cpu.SetCardInfoText(this.cpu.GetCardInfo());
 
-        // No need to check if the cpu is ALLOWED to attack or has changed its state to attack. So begin comparisons of attack points. Get the attacks to start.
-        let playerCardAttack = this.playerCard.AttackPoints;
+        // No need to check if the cpu is ALLOWED to attack or has changed its state to attack. So begin comparisons of attack points. Get the attacks to start. 
+        let playerCardAttack = this.player.GetCard().AttackPoints; 
         let cpuCardAttack = this.cpu.GetCard().AttackPoints;
 
         // Check if cpu actually won this.
         if(cpuCardAttack > playerCardAttack) {
             // If the cpu did win, simply assign the pool value to the players money total.
-            this.cpuMoneyElement.textContent = parseInt(this.cpuMoneyElement.textContent) + parseInt(this.currentPool.textContent);
+            this.cpu.GetMoneyElement().textContent = parseInt(this.cpu.GetMoneyElement().textContent) + parseInt(this.currentPool.textContent);
 
             // Empty pool.
             this.currentPool.textContent = 0;
@@ -608,8 +619,8 @@ export class CardManager {
         
         // If the cpu loses.
         else if(playerCardAttack > cpuCardAttack) {
-            // Take what's in the pool and give it to the player.
-            this.playerMoneyElement.textContent = parseInt(this.playerMoneyElement.textContent) + parseInt(this.currentPool.textContent);
+            // Take what's in the pool and give it to the player. 
+            this.player.IncreaseMoneyElement(this.currentPool.textContent);
 
             // Empty pool.
             this.currentPool.textContent = 0;
@@ -626,9 +637,9 @@ export class CardManager {
             // Get half money from pool.
             let halfMoneyFromPool = parseInt(this.currentPool.textContent) / 2;
 
-            // Add it to both elements.
-            this.playerMoneyElement.textContent = parseInt(this.playerMoneyElement.textContent) + halfMoneyFromPool;
-            this.cpuMoneyElement.textContent = parseInt(this.cpuMoneyElement.textContent) + halfMoneyFromPool;
+            // Add it to both elements. 
+            this.player.IncreaseMoneyElement(halfMoneyFromPool);
+            this.cpu.GetMoneyElement().textContent = parseInt(this.cpu.GetMoneyElement().textContent) + halfMoneyFromPool;
 
             // Empty pool.
             this.currentPool.textContent = 0;
@@ -648,16 +659,16 @@ export class CardManager {
     }
 
     PostHandCleanUp() {
-        // Must give the player card back to the deck or stack.
-        this.stack.Push(this.playerCard.Name, this.playerCard.AttackPoints, this.playerCard.DefensePoints, this.playerCard.Imgsrc,
-            this.playerCard.Level, this.playerCard.Type, this.playerCard.Attribute);
+        // Must give the player card back to the deck or stack. pc
+        this.stack.Push(this.player.GetCard().Name, this.player.GetCard().AttackPoints, this.player.GetCard().DefensePoints, this.player.GetCard().Imgsrc,
+            this.player.GetCard().Level, this.player.GetCard().Rank, this.player.GetCard().Link, this.player.GetCard().Type, this.player.GetCard().Attribute);
         
         // Same with the cpu card.
         this.stack.Push(this.cpu.GetCard().Name, this.cpu.GetCard().AttackPoints, this.cpu.GetCard().DefensePoints, this.cpu.GetCard().Imgsrc,
-            this.cpu.GetCard().Level, this.cpu.GetCard().Type, this.cpu.GetCard().Attribute);
+            this.cpu.GetCard().Level, this.cpu.GetCard().Rank, this.cpu.GetCard().Link, this.cpu.GetCard().Type, this.cpu.GetCard().Attribute);
         
-        // Set both the player and cpu cards to null.
-        this.playerCard = null;
+        // Set both the player and cpu cards to null. 
+        this.player.DeleteCard();
         this.cpu.DeleteCard();
 
         // For TESTING purposes, print the deck we have in the stack and the cpu's saved deck and see if they match, they must.
@@ -671,9 +682,9 @@ export class CardManager {
 
     // Referenced in FoldHand() function.
     GameOver() {
-        // To decide WHO wins, let's check who has hit 0 with their money. 
-        let playerMoney = this.playerMoneyElement.textContent;
-        let cpuMoney = this.cpuMoneyElement.textContent;
+        // To decide WHO wins, let's check who has hit 0 with their money. z pme
+        let playerMoney = this.player.GetMoneyElement().textContent;
+        let cpuMoney = this.cpu.GetMoneyElement().textContent; // cpuMoneyElement.textContent;
         
         if(playerMoney <= 0) {
             // If it's 0, we simply have to display a losing message.

@@ -3,9 +3,11 @@ import { CardManager } from './cardmanager.js'
 import { Cpu } from './cpu.js'
 import { Context } from './statecontext.js'
 import { DeckStack } from './deckstack.js'
+import { DeckFactoryClass } from './deckFactory.js'
+import { Player } from './player.js'
 
 // Initialize the card manager with cpu. Cpu needs state system to function as well so we provide it just that.
-const cm = new CardManager(new Cpu(new Context), new DeckStack);
+const cm = new CardManager(new Player, new Cpu(new Context), new DeckStack(new DeckFactoryClass));
 
 // Save the elements or get the id's of all the buttons in index.html.
 cm.SaveElements();

@@ -1,22 +1,20 @@
+import { Entity } from './entity.js'
+
 // This will be the opponent of the player in the game of course.
-export class Cpu {
+export class Cpu extends Entity {
     // Cpu MUST be given the deck of cards because it'll make proper decisions based on which cards are still in the deck.
     constructor(stateContext) {
+        // Call the base classes constructor
+        super("cpuCardInfoText", "cpuMoney", "cpuImage");
+
         // Set deck to null until it's properly set.
         this.deck = null;
-
-        // Set the card to null since it doesn't have one yet.
-        this.card = null;
 
         // Save the current value to bet if the cpu decides to go for it.
         this.valueToBet = 0;
 
         // Save the state pattern as well.
         this.stateSystem = stateContext;
-    }
-
-    SetDeck(deck) {
-        this.deck = deck;
     }
 
     SaveElements() {
@@ -28,33 +26,18 @@ export class Cpu {
         this.textIdElement = document.getElementById("instructionsUpdate"); 
     }
 
-    // Getter for the state to use in CardManager.
+
     GetState() {
         return this.stateSystem;
     }
 
-    // Create setters and getters regarding the card for interaction with CardManager.
-    SetCard(card) {
-        this.card = card;
-
-        // For testing purposes, print card.
-        this.PrintCard();
+    // Save the deck so the cpu can properly make a decision.
+    SetDeck(deck) {
+        this.deck = deck;
     }
 
-    GetCard() {
-        return this.card;
-    }
 
-    // Null the card after the player folds.
-    DeleteCard() {
-        this.card = null;
-    }
-
-    // Test function to display card.
-    PrintCard() {
-        console.log("Cpu has the card " + this.card.Name + " " + this.card.AttackPoints + " " + this.card.DefensePoints + " " + this.card.Imgsrc + " "
-            + this.card.Level + " " + this.card.Type + " " + this.card.Attribute);
-    }
+    
 
     RaiseOrFold(valueToBet) {
         // Sort the deck before the cpu makes its decision.
@@ -106,10 +89,10 @@ export class Cpu {
         // Get index variable to count how many cards the cpu card is greater than. Increment it everytime the cpu's card IS better.
         let index = 0;
 
-        // Loop over the whole thing.
-        for(let i = 0; i < this.deck.length; ++i) {
+        // Go over the whole thing with a for of loop.
+        for(let deckCard of this.deck) {
             // If the card at index 0, 1, etc less than or equal to the card the cpu has? If so, the cpu has a chance of beating it or making a stalemate.
-            if(this.deck[i].AttackPoints <= this.card.AttackPoints) {
+            if(deckCard.AttackPoints <= this.card.AttackPoints) {
                 // So increment the index for the later part of the algorithm.
                 ++index;
             }
@@ -131,6 +114,7 @@ export class Cpu {
         let low = 0;
         let high = this.deck.length;
         let midpoint = Math.floor((low + high) / 2);
+        console.log("Index is " + index);
 
         // Use if statements to check the decision. Here cpu is confident so it can raise the bet.
         if(index > midpoint) {

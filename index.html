@@ -69,8 +69,7 @@
         Chaos Dragon Levianeer-->
         <div class="container">
             <div id="cardPlacement" class="row">
-                <p id="playerCardInfoText">
-                </p>
+                <p id="playerCardInfoText"></p>
                 <div class="col-3">
                     <p id="cardText" class="playerCardText">Player Card</p>
                     <img src="images/cardback.png" alt="" id="playerImage" height="255" width="205">
@@ -129,8 +128,23 @@
                 $('*[id=cardText]:visible').each(function(){
                     $(this).css("color", "white");
                 });
+
+                $("#deckChoicesText").css("color", "white");
             });
         </script>
+
+        <!-- We'll allow the player to choose between -->
+        <div id="deckChoiceElements" class="d-flex justify-content-center">
+            <p id="deckChoicesText">Decks to select from: </p>
+
+            <select id="choiceOfDeck">
+                <option value="Deck 1">Generic</option>
+                <option value="Deck 2">Shaddoll Showdown</option>
+                <option value="Deck 3">Duel Overload</option>
+                <option value="Deck 4">Secret Slayer</option>
+            </select>
+        </div>
+
 
         <div id="buttons" class="d-flex justify-content-center"> 
             <button id="beginDuelButton" class="btn btn-primary"> Begin Duel! </button>
@@ -147,7 +161,7 @@
                 <option value="250">250</option>
             </select>
         </div>
-
+        
         <!-- The javascript files will be loaded once main.js is called and functionality will be properly applied. -->
         <script type="module" src="main.js"></script>
 

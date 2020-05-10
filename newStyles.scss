@@ -72,7 +72,7 @@ body {
 #headerTextSpace {
     position: relative;
     background-color: #1b2e3b;
-    margin-bottom: 45px;
+    margin-bottom: 10px;
     height: 80px;
 }
 
@@ -86,4 +86,20 @@ body {
     font-size: 29px;
     font-family: serif;
     color: white;
+}
+
+#deckChoiceElements {
+    position: relative;
+    margin-top: 25px;
+}
+
+#deckChoicesText {
+    position: relative;
+    margin-left: -20px;
+    margin-top: 10px;
+}
+
+#choiceOfDeck {
+    position: relative;
+    margin-left: 20px;
 }
