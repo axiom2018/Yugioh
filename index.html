@@ -7,13 +7,9 @@
 
         <title>YugiohGame</title>
         
-        <link type="text/css" rel="stylesheet" href="main.css"/>
-        <link type="text/css" rel="stylesheet" href="newStyles.css">
+        <link type="text/css" rel="stylesheet" href="styles.css">
 
-        
         <script type="text/javascript" src="jquery-3.5.0.min.js"> </script>
-        
-
     </head>
     
     <body>
@@ -50,7 +46,6 @@
             <div id="poolText" class="badge badge-primary">Current bet</div>
         </div>
 
-
         <!-- Instructions to the player. -->
         <div class="instructions text-center"> 
             <p id="bettingInstruction"> 
@@ -64,9 +59,7 @@
         <!-- This text is to display for what to do next. -->
         <p id="instructionsUpdate" class="text-center"> </p>
 
-        <!-- Use the container class to help center.
-        Blue Eyes White Dragon
-        Chaos Dragon Levianeer-->
+        <!-- This is meant for card placement. Really emphasizing bootstrap classes here. -->
         <div class="container">
             <div id="cardPlacement" class="row">
                 <p id="playerCardInfoText"></p>
@@ -83,10 +76,10 @@
             </div>
         </div>
         
-        <!-- Use jQuery to color the text to white since the background will be a dark color, because dark colors are cool. -->
+        <!-- Use jQuery for several purposes here. -->
         <script>
             $("document").ready(function(){
-                // Change vital text color to white.
+                // Change vital text color to white. A few of the backgrounds have mostly dark colors so this helps a lot.
                 $("#playerMoney").css("color", "white");
                 $("#cpuMoney").css("color", "white");
                 $("#poolTotalMoney").css("color", "white");
@@ -94,16 +87,15 @@
                 $("#instructionsUpdate").css("color", "white");
                 $("#playerCardInfoText").css("color", "white");
                 $("#cpuCardInfoText").css("color", "white");
+                $("#deckChoicesText").css("color", "white");
 
-                /* Select a background image from a variety. This is a dynamic background implementation. Must be sure to stay
-                updated with how many background images or wallpapers we have. in the images/wallpapers folder to get a proper 
-                range going. For example if we have 3 background images, the range will be 1 to 3. Get the index according to 
-                the amount of wallpapers. */
+                /* Select a background image from a variety. This is a dynamic background implementation. Must be sure to stay updated with how many background images
+                or wallpapers we have. in the images/wallpapers folder to get a proper range going. For example if we have 3 background images, the range will be 1 to 3.
+                Get the index according to the amount of wallpapers. */
                 let index = Math.floor(Math.random() * 5) + 1;
 
                 // Concatenate the index to the following string.
                 let stringLocation = 'url(../images/wallpapers/' + index + '.jpg)';
-                // let stringLocation = 'url(../images/wallpapers/4.jpg';
 
                 // Now apply the image to the background.
                 $("body").css("background-image", stringLocation);
@@ -128,12 +120,11 @@
                 $('*[id=cardText]:visible').each(function(){
                     $(this).css("color", "white");
                 });
-
-                $("#deckChoicesText").css("color", "white");
             });
         </script>
 
-        <!-- We'll allow the player to choose between -->
+        <!-- The deck choices were a good idea to add in. The player can choose from a variety of decks and of course this can keep growing
+        in the future. Helps them keep interested and decsk can easily be added. -->
         <div id="deckChoiceElements" class="d-flex justify-content-center">
             <p id="deckChoicesText">Decks to select from: </p>
 
@@ -145,7 +136,7 @@
             </select>
         </div>
 
-
+        <!-- Quite a few buttons are used to manage gameplay so set them up here. -->
         <div id="buttons" class="d-flex justify-content-center"> 
             <button id="beginDuelButton" class="btn btn-primary"> Begin Duel! </button>
             <button id="getCardForPlayer" class="btn btn-dark"> Get Card! </button>

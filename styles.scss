@@ -103,3 +103,9 @@ body {
     position: relative;
     margin-left: 20px;
 }
+
+@import "../js-basics/node_modules/bootstrap/scss/bootstrap.scss";
+
+.orange {
+    background-color: orange;
+}
