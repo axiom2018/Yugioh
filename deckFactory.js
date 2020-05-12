@@ -110,7 +110,6 @@ export class DeckFactoryClass {
             case 3:
                 return SecretSlayers();
             default:
-                console.log("Bad number received!\n");
                 break;
         }
     }

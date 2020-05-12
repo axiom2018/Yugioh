@@ -48,9 +48,6 @@ export class DeckStack {
     Push(...cardData) {
         // Check if max is reached. If so, return early.
         if (this.deck.length >= this.max) {
-            // Test log.
-            console.log("Maximum " + this.max + " has been reached for stack, because stack length is " + this.deck.length);
-            console.log("So the card " + name + " cannot be added!\n");
             return;
         }
 
@@ -62,19 +59,11 @@ export class DeckStack {
     Pop() {
         // Check if empty, if so, return early.
         if(this.deck.length <= 0) {
-            console.log("No more cards remain in the deck!\n");
             return;
         }
 
         // Return the top value.
         return this.deck.pop();
-    }
-
-    // Simply show stack contents in console.
-    PrintDeckInStackForm() {
-        for(let i = this.deck.length - 1; i >= 0; --i) {
-            console.log(this.deck[i]);
-        }
     }
 
     // Referenced in card manager constructor for the cpu.

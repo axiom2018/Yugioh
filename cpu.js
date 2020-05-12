@@ -43,10 +43,6 @@ export class Cpu extends Entity {
         // Sort the deck before the cpu makes its decision.
         this.InsertionSort();
 
-        console.clear();
-        console.log("Deciding on cpu move...\n");
-        this.PrintSavedDeck();
-
         // Save the value to bet.
         this.valueToBet = valueToBet;
 
@@ -114,25 +110,17 @@ export class Cpu extends Entity {
         let low = 0;
         let high = this.deck.length;
         let midpoint = Math.floor((low + high) / 2);
-        console.log("Index is " + index);
+        
+        // Display message to screen.
+        this.textIdElement.textContent = "Cpu making its decision!";
 
         // Use if statements to check the decision. Here cpu is confident so it can raise the bet.
         if(index > midpoint) {
-            // Display message in text.
-            this.textIdElement.textContent = "Cpu making decision (1)!";
-
             // The cpu decided to attack, set it's state to allow now.
             this.stateSystem.ChangeStateToAllow();
         }
 
         else if(index < midpoint) {
-            // Cpu is NOT confident it can win, fold.
-            console.log("Cpu folds! It cannot win with " + this.card.Name + " because it has " + this.card.AttackPoints + 
-                " attack points.\n");
-
-            // Display message in text.
-            this.textIdElement.textContent = "Cpu making decision (2)!";
-
             /* Since the cpu decided to fold we must make sure the state reflects Deny, as in "It doesn't matter if the cpu card is stronger, the cpu
             already decided to fold. Cpu can't see that the players card is potentially weaker than it's own card." */
             this.stateSystem.ChangeStateToDeny();
@@ -143,23 +131,18 @@ export class Cpu extends Entity {
         else { 
             // Get random number, either 1 or 0.
             let value = this.GetRandomNumber();
+
+            // Display message to screen.
+            this.textIdElement.textContent = "Cpu unsure on betting or folding!";
+
+            // Use switch to assist putting the value to use.
             switch(value)
             {
                 case 0:
-                    console.log("Cpu will back off. Random value is " + value + "\n");
-
-                    // Display message in text.
-                    this.textIdElement.textContent = "Cpu making decision (4)!";
-    
                     // The cpu backed off, set it's state to deny.
                     this.stateSystem.ChangeStateToDeny();
                     break;
                 case 1:
-                    console.log("Cpu will go for it! Random value is " + value + "\n");
-
-                    // Display message in text.
-                    this.textIdElement.textContent = "Cpu making decision (3)!";
-    
                     // The cpu decided to attack, set it's state to allow now.
                     this.stateSystem.ChangeStateToAllow();
                     break;
@@ -177,18 +160,5 @@ export class Cpu extends Entity {
 
     GetRandomNumber() {
         return Math.floor(Math.random() * Math.floor(2));
-    }
-
-    PrintSavedDeck() {
-        // Prints from LEAST to greatest here.
-        console.log("\nCpu deck!\n");
-
-        // for(let i = 0; i < this.deck.length; ++i) {
-        //     console.log(this.deck[i]);
-        // }
-
-        for(let i = this.deck.length - 1; i >= 0; --i) {
-            console.log(this.deck[i]);
-        }
     }
 }

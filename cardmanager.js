@@ -95,12 +95,6 @@ export class CardManager {
         this.lastHandButton.addEventListener("click", function(){ self.lastHandFunction(); })
     }
 
-    PrintMonsterCards() {
-        for(let i = 0; i < this.deck.length; ++i) {
-            console.log(this.deck[i]);
-        }
-    }
-
     // Need a function to alter the ability to duel, so after user presses the button to begin the duel.
     ToggleDuelState() {
         // Check if it's already true, if so, return function early.
@@ -159,11 +153,7 @@ export class CardManager {
         // Also the image source for the player card must be changed back to the default.
         this.player.SetImageID("src", "images/cardback.png");
 
-        // Message, shuffle, and print stack to screen.
-        console.clear();
-        console.log("Reprinting stack after fold!\n");
         this.stack.Shuffle();
-        this.stack.PrintDeckInStackForm();
 
         // At the end, make the buttons and selector dissappear.
         this.raiseBetButton.style.display = "none";
@@ -225,7 +215,6 @@ export class CardManager {
 
             // However if it's true, we need to do extra steps since the attacks of the cards are equal.
             else {
-                console.log("in else cuz attack equals is " + attacksEqual);
                 // Get half money from pool.
                 let halfMoneyFromPool = parseInt(this.currentPool.textContent) / 2;
 
@@ -240,7 +229,6 @@ export class CardManager {
              /* If the cpu didn't decide to attack, we CANNOT give half of the pool to both player and cpu. Why? If the player presses 
              getcard, that's 50 from each participant so the pool is at 100. Player raises the attack about $50, making pool 150, BETTING.
              But cpu backs out. Since the cpu didn't risk, the pool money goes to the player. */
-             console.log("Testing else statement.\n");
 
             // Display non attack message.
             this.textIdElement.textContent = secondMessage;
@@ -285,12 +273,8 @@ export class CardManager {
         // Resets the cards, and the bets.
         this.PostHandCleanUp();
 
-        console.log("Player game over value is " + this.player.GetGameOverCheck());
-        console.log("Cpu game over value is " + this.cpu.GetGameOverCheck());
-
         // Check for playerGameOverCheck ig it's true, if so, the player MIGHT have lost. Changed PME here too, accessed text content. goc
         if(this.player.GetGameOverCheck() && (parseInt(this.player.GetMoneyElement().textContent)) <= 0) {
-            console.log("Player loses! Game over!\n");
             this.textIdElement.textContent = "Bro you LOST bro. You're looking weak out here. Refresh the page and try again!";
             this.getResultButton.style.display = "none";
             return;
@@ -298,7 +282,6 @@ export class CardManager {
 
         // Check for playerGameOverCheck ig it's true, if so, the player MIGHT have lost.
         if(this.cpu.GetGameOverCheck() && (parseInt(this.cpu.GetMoneyElement().textContent)) <= 0) {
-            console.log("Cpu loses! Game over!\n");
             this.textIdElement.textContent = "Victory! Celebrate your Yugioh abilities with a beer. Refresh the page to play again.";
             this.getResultButton.style.display = "none";
             return;
@@ -317,9 +300,7 @@ export class CardManager {
 
     Refresh() {
         // Refresh console for testing and print the deck.
-        console.clear();
         this.stack.Shuffle();
-        this.stack.PrintDeckInStackForm();
 
         // Clear the text for the card info.
         this.player.SetCardInfoText("");
@@ -403,9 +384,6 @@ export class CardManager {
     }
 
     GivePlayerACard() {
-        // Simple clear for testing.
-        console.clear();
-
         // Get a card from the stack for player. 
         this.player.SetCard(this.stack.Pop());
 
@@ -421,10 +399,7 @@ export class CardManager {
         // Set the player zone to it's card.
         this.player.SetImageID("src", this.player.GetCard().Imgsrc); 
 
-        // Then just shuffle and print the deck.
-        console.log("\n\n");
         this.stack.Shuffle();
-        this.stack.PrintDeckInStackForm();
 
         // Finally since we give out a card, we must decrement money from the player and cpu. 
         let playerMoney = this.player.GetMoneyElement().textContent - this.cost;
@@ -432,7 +407,6 @@ export class CardManager {
 
         // EVERY time we get a card, we know for a fact 50 will be taken from both competitors.
         this.currentBet = this.cost * 2;
-        console.log("Current bet: " + this.currentBet);
 
         // We have the current bet ready, and that's the value we display in the pool, so lets do that.
         this.currentPool.textContent = parseInt(this.currentPool.textContent) + parseInt(this.currentBet);
@@ -440,9 +414,6 @@ export class CardManager {
         // Then set it on screen.
         this.player.GetMoneyElement().textContent = playerMoney;
         this.cpu.GetMoneyElement().textContent = cpuMoney;
-
-        console.log("Players current money is " + parseInt(this.player.GetMoneyElement().textContent));
-        console.log("Cpus current money is " + parseInt(this.cpu.GetMoneyElement()));
 
         // Display new text on screen regarding what to do next.
         this.textIdElement.textContent = "You see your card to the left. Raise the bet or fold your hand.";
@@ -500,14 +471,12 @@ export class CardManager {
         if(parseInt(this.player.GetMoneyElement().textContent) <= 0) {
             // Set the boolean to true so when hand is done, it checks to see if player lost.
             this.player.SetGameOverCheck(true);
-            console.log("Player this is your LAST bet. Value is " + this.player.GetGameOverCheck());
         }
 
         // Check if cpu money is 0. 
         if(parseInt(this.valueToBet) >= parseInt(this.cpu.GetMoneyElement().textContent)) {
             // Set the boolean to true so when hand is done, it checks to see if cpu lost.
             this.cpu.SetGameOverCheck(true);
-            console.log("Cpu this is your last bet. Value is " + this.cpu.GetGameOverCheck());
         }
     }
 
@@ -563,7 +532,6 @@ export class CardManager {
         }
 
         else if(playerCardAttack == cpuCardAttack) {
-            console.log("EQUAL ATTACK");
             // Get half money from pool.
             let halfMoneyFromPool = parseInt(this.currentPool.textContent) / 2;
 
@@ -633,7 +601,6 @@ export class CardManager {
         }
 
         else if(playerCardAttack == cpuCardAttack) {
-            console.log("cpu equal!\n");
             // Get half money from pool.
             let halfMoneyFromPool = parseInt(this.currentPool.textContent) / 2;
 
@@ -670,10 +637,6 @@ export class CardManager {
         // Set both the player and cpu cards to null. 
         this.player.DeleteCard();
         this.cpu.DeleteCard();
-
-        // For TESTING purposes, print the deck we have in the stack and the cpu's saved deck and see if they match, they must.
-        this.stack.PrintDeckInStackForm();
-        this.cpu.PrintSavedDeck();
 
         // Reset current bet and value to bet.
         this.currentBet = 0;
