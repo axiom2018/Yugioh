@@ -60,7 +60,7 @@ export class Entity {
     // These next four are for the use of cards.
     SetCard(card) {
         this.card = card;
-        this.PrintCard();
+        // this.PrintCard();
     }
 
     GetCard() {

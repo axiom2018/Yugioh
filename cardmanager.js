@@ -33,6 +33,10 @@ export class CardManager {
 
         // Test variable.
         this.testClassObj = null;
+
+
+        // this.player.SetImageID("src", "images/cardback.png");
+        // this.player.SetCard(this.stack.Pop());
     }
 
     // The buttons have id's assigned and in order to get elements by id, we'll need to do so with the id tag.
@@ -118,9 +122,23 @@ export class CardManager {
         // Call the stack and let it use the factory for the deck we've selected.
         this.stack.LoadDeck(this.deckSelectors.selectedIndex);
 
+        // Get deck for the next for loop.
+        let deck = this.stack.GetDeck();
+
+        // Cycle through the deck by setting each cards image to the player cards CURRENT image.
+        for(let i = 0; i < deck.length; ++i) {
+            this.player.SetImageID("src", deck[i].Imgsrc);
+            this.cpu.SetImageID("src", deck[i].Imgsrc);
+        }
+
+        // When cycling is done, go ahead and reset the card to the default back.
+        this.player.SetImageID("src", "images/cardback.png");
+        this.cpu.SetImageID("src", "images/cardback.png");
+
         // Set the deck for the cpu.
         this.cpu.SetDeck(this.stack.GetDeck());
     }
+
 
     // When player isn't confident in the card and doesn't want to risk losing more money.
     FoldHand() {
